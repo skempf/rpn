@@ -1,0 +1,32 @@
+#+TITLE: README
+A simple RPN calculator written in Lisp.
+
+I like to use this code when I need a floating point value in a shell script. But, for fun, I wanted to have a REPL.
+
+The original version was written in Fortran, but this project was a chance to learn Lisp.
+
+In a shell script, it is easy to capture the result in a shell parameter:
+
+p=$(rpn 1 2 3 sum)
+
+Available operations:
+
+- standard mathematical operations (+, -, *, /, sqrt, sq, abs)
+  - "x" is an alias for "*"
+- trigometric functions (sin, cos, tan, asin, acos, atan, atan2, sinh, cosh, tanh, asinh, acosh, atanh)
+- exponential (exp -- natural logarithm, ln, log10, log)
+- special
+  - ! -- factorial ("fac" is alias)
+  - sum -- sum all numbers on the stack
+  - prod -- product of all numbers on the stack
+  - mean -- average of all numbers on the stack
+  - show -- print the stack
+  - ent -- repeat last value
+  - clear -- clear the stack
+  - quit -- end REPL
+  - deg2rad -- convert number to radians
+  - rad2deg -- convert number to degrees
+  - min -- minimum of two numbers
+  - max -- maximum of two numbers
+  - mod -- modulus
+  - rem -- remainder
