@@ -15,30 +15,10 @@
 ;;; ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 ;;; OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ;;; 
-
-(in-package :rpn)
-
-;;;-----------------------------------------------------------------------------
-;;; system
-(defun get-sys-argv ()
-  "properly return system arguments."
-  (or 
-   #+SBCL sb-ext:*posix-argv*
-   #+ECL (ext:command-args)
-   #+CLISP *args*
-   #+LISPWORKS system:*line-arguments-list*
-   #+CMU extensions:*command-line-words*
-   nil))
-
-(defun sys-quit (&optional (code 0))
-  "exit gracefully."
-  (or
-   #+SBCL (sb-ext:exit :code code)
-   #+ECL (ext:exit code)
-   nil))
+(in-package #:com.indyeng.rpn)
 
 ;;;-----------------------------------------------------------------------------
-;;; extra math operations
+;;; Extra math operations
 (defparameter deg2rad (/ pi 180.0))
 (defparameter rad2deg (/ 180.0 pi))
 (defparameter ft2m 0.3048)
@@ -93,14 +73,14 @@
       prod))
 
 ;;;-----------------------------------------------------------------------------
-;;; fun stuff
+;;; Fun stuff
 (defun rpn-time-check (n)
   "run dotimes `n' times and report time."
   (labels ((f (n) (dotimes (i n nil) (factorial 100) )))
     (time (f n))))
 
 ;;;-----------------------------------------------------------------------------
-;;; operator table
+;;; Operator table
 ;;; improvements?
 ;;; 1. turn this into a hash-table
 ;;; 2. allow rule such that we can have a function return multiple
@@ -171,7 +151,7 @@
     (ent . (rpn-last-value . 0))
     (clear . (rpn-clear-stack . 0))
     (time-check . (rpn-time-check . 1))
-    (quit . (sys-quit . 0)))
+    (quit . (uiop:quit . 0)))
   "RPN Calculator rule table.")
 
 (defun rpn-op-p (op)
@@ -183,7 +163,7 @@ return the number of required arguments."
         nil)))
 
 ;;;-----------------------------------------------------------------------------
-;;; calculation stack
+;;; Calculation stack
 (defvar *rpn-stack* (cons nil 0)
   "RPN Calculator value stack.")
 
@@ -227,7 +207,7 @@ return the number of required arguments."
       nil)))
 
 ;;;-----------------------------------------------------------------------------
-;;; calculator
+;;; Calculator
 (defun rpn-apply-op (op nop)
   "apply `op' to `nop' arguments."
   (let ((res (apply op (rpn-pop nop))))
@@ -249,15 +229,6 @@ return the number of required arguments."
                (t nil)))
         (t (format t "~% Unrecognized argument: ~A . ~A~%" op op-type))))
 
-(defun rpn (&rest args)
-  "loop through all arguments."
-  (dolist (arg args (rpn-last-value))
-    (if (listp arg)
-        (mapcar #'rpn arg)
-        (rpn-eval arg))))
-
-;;;-----------------------------------------------------------------------------
-;;; main
 (defun rpn-parse-line (line)
   "turn input `line' (string) into a list of read processed items."
   (do ((*read-eval* nil)
@@ -270,6 +241,15 @@ return the number of required arguments."
       (push arg res)
       (setf start iloc))))
 
+;;;-----------------------------------------------------------------------------
+;;; Public
+(defun rpn (&rest args)
+  "loop through all arguments."
+  (dolist (arg args (rpn-last-value))
+    (if (listp arg)
+        (mapcar #'rpn arg)
+        (rpn-eval arg))))
+
 (defun rpn-repl ()
   "RPN Calculator REPL."
   (loop
@@ -277,13 +257,15 @@ return the number of required arguments."
      (let ((res (rpn (rpn-parse-line (read-line)))))
        (when res (format t "~A~%" res)))))
 
-(defun rpn-main ()
-  "RPN Calculator main for external application."
-  (let ((*package* (find-package :rpn)))
-    (let ((aline (format nil "~{~a~^ ~}" (cdr (get-sys-argv)))))
+;;;-----------------------------------------------------------------------------
+;;; Executable
+(defun rpn-exe ()
+  "toplevel for external call."
+  (let ((*package* (find-package :com.indyeng.rpn)))
+    (let ((aline (format nil "~{~a~^ ~}" (cdr (uiop:command-line-arguments)))))
       (if (zerop (length aline))
           (rpn-repl)
           (format t "~A" (rpn (rpn-parse-line aline)))))))
 
 ;;;-----------------------------------------------------------------------------
-;;; end
+;;; End

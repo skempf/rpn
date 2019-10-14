@@ -15,8 +15,7 @@
 ;;; ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 ;;; OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ;;;
-
-(in-package :asdf)
+(in-package #:asdf)
 
 ;;;-----------------------------------------------------------------------------
 (defsystem "rpn"
@@ -28,12 +27,12 @@
   :maintainer "Severin Kempf skempf@indyeng.com"
   :license "ISC"
   :depends-on nil
+  :build-operation program-op
+  :build-pathname "../bin/rpn"
+  :entry-point "com.indyeng.rpn::rpn-exe"
   :serial t
   :components ((:file "package")
-               (:file "rpn"))
-  :build-operation "program-op"
-  :build-pathname "bin/rpn"
-  :entry-point "rpn::rpn-main")
+               (:file "rpn")))
 
 ;;;-----------------------------------------------------------------------------
-;;; end
+;;; End

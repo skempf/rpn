@@ -16,18 +16,13 @@
 ;;; ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 ;;; OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ;;; 
-
-(in-package :cl-user)
+(in-package #:cl-user)
 
 ;;;-----------------------------------------------------------------------------
 ;;; define the package
 (defpackage :com.indyeng.rpn
-  (:use :common-lisp)
-  (:nicknames :rpn)
-  (:export 
-   :rpn
-   :rpn-repl
-   ))
+  (:use #:cl)
+  (:export #:rpn #:rpn-repl))
 
 ;;;-----------------------------------------------------------------------------
-;;; end
+;;; End
